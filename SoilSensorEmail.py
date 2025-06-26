@@ -11,7 +11,7 @@ from email.message import EmailMessage
 
 # ===== Sensor Configuration =====
 SENSOR_PIN = 4  # GPIO4 (BCM numbering)
-REPORT_TIMES = [3, 7, 11, 15]  # Hours when reports should be sent (24-hour format)
+REPORT_TIMES = [8, 12, 16, 20]  # Hours when reports should be sent (24-hour format)
 
 # ===== Email Configuration (163 example) =====
 SMTP_SERVER = 'smtp.163.com'
@@ -28,54 +28,72 @@ def setup_gpio():
 
 # ===== Beautiful Email Template =====
 def create_email_html(status, sensor_value):
-    color = "red" if status else "green"
-    status_text = "WATER NEEDED!!!" if status else "Adequate Moisture"
-    
+    alert_color = "#e74c3c" if status else "#2ecc71"
+    alert_text = "Urgent: Water Required!" if status else "Soil Moisture Level: Normal"
+    moisture_label = "Dry" if sensor_value else "Moist"
+    advice = "Immediate watering is advised." if sensor_value else "No action needed."
+
     return f"""
 <html>
-    <head>
-        <style>
-            body {{ font-family: Arial, sans-serif; }}
-            .status {{
-                color: {color};
-                font-weight: bold;
-                font-size: 24px;
-                margin: 20px 0;
-            }}
-            .container {{
-                border: 1px solid #ddd;
-                border-radius: 10px;
-                padding: 20px;
-                max-width: 500px;
-                margin: 0 auto;
-            }}
-            .footer {{
-                margin-top: 20px;
-                font-size: 12px;
-                color: #777;
-            }}
-            .sensor-value {{
-                background-color: #f5f5f5;
-                padding: 10px;
-                border-radius: 5px;
-                font-family: monospace;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h2>🌱 Plant Status Report</h2>
-            <div class="status">Status: {status_text}</div>
-            <p>Detection time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
-            <div class="sensor-value">
-                Sensor reading: <strong>{'DRY' if sensor_value else 'wet'}</strong>
-            </div>
-            <p>{'Your plant needs watering!' if sensor_value else 'Your plant has adequate moisture.'}</p>
-            <div class="footer">
-                This is an automated message from your Plant Monitoring System.
-            </div>
-        </div>
-    </body>
+<head>
+<style>
+body {{
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+}}
+.report-card {{
+    background-color: #ffffff;
+    border-left: 6px solid {alert_color};
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 24px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 540px;
+    margin: 30px auto;
+}}
+.status-header {{
+    font-size: 22px;
+    font-weight: 600;
+    color: {alert_color};
+    margin-bottom: 12px;
+}}
+.timestamp {{
+    font-size: 14px;
+    color: #999;
+    margin-bottom: 10px;
+}}
+.sensor-data {{
+    font-family: monospace;
+    font-size: 16px;
+    padding: 10px;
+    background-color: #eef3f7;
+    border-radius: 6px;
+    margin: 12px 0;
+}}
+.note {{
+    font-size: 14px;
+    margin-top: 10px;
+}}
+.footer {{
+    font-size: 12px;
+    text-align: center;
+    color: #aaa;
+    margin-top: 20px;
+}}
+</style>
+</head>
+<body>
+<div class="report-card">
+    <div class="status-header">{alert_text}</div>
+    <div class="timestamp">Time Checked: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</div>
+    <div class="sensor-data">Soil Condition: <strong>{moisture_label}</strong></div>
+    <div class="note">{advice}</div>
+    <div class="footer">
+        Message sent from your Smart Garden System.
+    </div>
+</div>
+</body>
 </html>
 """
 
@@ -89,7 +107,7 @@ def send_email(status, test=False):
             subject = "[TEST] Plant Monitoring System Started"
             message = "The plant monitoring system has started successfully! This is a test email."
             html_content = create_email_html(current_status, current_status)
-            html_content = html_content.replace("🌱 Plant Status Report", "🌱 Plant Monitoring System - Test Email")
+            html_content = html_content.replace("Plant Status Report", "Plant Monitoring System - Test Email")
         else:
             message = "Water needed!!!" if current_status else "Adequate Moisture"
             html_content = create_email_html(current_status, current_status)  # Fixed this line
