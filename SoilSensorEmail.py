@@ -1,7 +1,7 @@
 # Project Title: Plant Moisture Sensor with Scheduled Email Notification
-# Author: Yuxuan Chen
-# Student ID: 202283890031
-# Date: 23/4/2025
+# Author: Xu Junjie
+# Student ID: 202383890027
+# Date: 26/6/2025
 
 import RPi.GPIO as GPIO
 import smtplib
@@ -11,14 +11,14 @@ from email.message import EmailMessage
 
 # ===== Sensor Configuration =====
 SENSOR_PIN = 4  # GPIO4 (BCM numbering)
-REPORT_TIMES = [10, 14, 18, 22]  # Hours when reports should be sent (24-hour format)
+REPORT_TIMES = [3, 7, 11, 15]  # Hours when reports should be sent (24-hour format)
 
 # ===== Email Configuration (163 example) =====
 SMTP_SERVER = 'smtp.163.com'
 SMTP_PORT = 25
-SENDER_EMAIL = "15961169096@163.com"
-SENDER_PASSWORD = "MSTtq32hYp8MiRcz" 
-RECEIVER_EMAIL = "642962313@qq.com"
+SENDER_EMAIL = "17834623809@163.com"
+SENDER_PASSWORD = "BMgynVuZcyCghEym" 
+RECEIVER_EMAIL = "2627932466@qq.com"
 
 # ===== GPIO Initialization =====
 def setup_gpio():
@@ -29,7 +29,7 @@ def setup_gpio():
 # ===== Beautiful Email Template =====
 def create_email_html(status, sensor_value):
     color = "red" if status else "green"
-    status_text = "WATER NEEDED!" if status else "Moisture OK"
+    status_text = "WATER NEEDED!!!" if status else "Adequate Moisture"
     
     return f"""
 <html>
@@ -68,9 +68,9 @@ def create_email_html(status, sensor_value):
             <div class="status">Status: {status_text}</div>
             <p>Detection time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             <div class="sensor-value">
-                Sensor reading: <strong>{'DRY' if sensor_value else 'WET'}</strong>
+                Sensor reading: <strong>{'DRY' if sensor_value else 'wet'}</strong>
             </div>
-            <p>{'⚠️ Your plant needs watering!' if sensor_value else '✅ Your plant has sufficient moisture.'}</p>
+            <p>{'Your plant needs watering!' if sensor_value else 'Your plant has adequate moisture.'}</p>
             <div class="footer">
                 This is an automated message from your Plant Monitoring System.
             </div>
@@ -91,7 +91,7 @@ def send_email(status, test=False):
             html_content = create_email_html(current_status, current_status)
             html_content = html_content.replace("🌱 Plant Status Report", "🌱 Plant Monitoring System - Test Email")
         else:
-            message = "Water needed!" if current_status else "Moisture sufficient"
+            message = "Water needed!!!" if current_status else "Adequate Moisture"
             html_content = create_email_html(current_status, current_status)  # Fixed this line
 
         msg = EmailMessage()
