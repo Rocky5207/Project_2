@@ -31,7 +31,7 @@ def create_email_html(status, sensor_value):
     alert_color = "#e74c3c" if status else "#2ecc71"
     alert_text = "Urgent: Water Required!" if status else "Soil Moisture Level: Normal"
     moisture_label = "Dry" if sensor_value else "Moist"
-    advice = "Immediate watering is advised." if sensor_value else "No action needed."
+    advice = "Watering is advised." if sensor_value else "No action is needed."
 
     return f"""
 <html>
@@ -101,7 +101,7 @@ body {{
 def send_email(status, test=False):
     try:
         current_status = GPIO.input(SENSOR_PIN)
-        subject = f"[Plant Alert] Water needed!" if current_status else "[Plant OK] Status normal"
+        subject = f"[Plant Alert] Water needed!!!" if current_status else "[Plant is OK] Status normal"
         
         if test:
             subject = "[TEST] Plant Monitoring System Started"
