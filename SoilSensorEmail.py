@@ -11,7 +11,7 @@ from email.message import EmailMessage
 
 # ===== Sensor Configuration =====
 SENSOR_PIN = 4  # GPIO4 (BCM numbering)
-REPORT_TIMES = [8, 12, 16, 20]  # Hours when reports should be sent (24-hour format)
+REPORT_TIMES = [9, 13, 17, 21]  # Hours when reports should be sent (24-hour format)
 
 # ===== Email Configuration (163 example) =====
 SMTP_SERVER = 'smtp.163.com'
